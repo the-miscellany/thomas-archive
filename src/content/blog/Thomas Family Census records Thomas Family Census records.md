@@ -27,11 +27,11 @@ Shadrach Thomas, San Augustine, Texas, 1850, Middle of the page
 ![Samuel Brown Thomas census record.](/census/1852-sbthomas.jpg)
 Samuel Brown Thomas, Mariposa, California, 1852, Only Last name visible, 4 from bottom
 
-![Shadrach Thomas census record.](/census/1860-sbthomas.jpg)
-Shadrach Thomas, San Augustine, Texas, 1860, Number 15
-
-![Samuel Brown Thomas census record.](/census/1860-sd-thomas.jpg)
+![Samuel Brown Thomas census record.](/census/1860-sbthomas.jpg)
 Samuel Brown Thomas, Mariposa, California, 1860, Number 9
+
+![Shadrach Thomas census record.](/census/1860-sd-thomas.jpg)
+Shadrach Thomas, San Augustine, Texas, 1860, Number 15
 
 ![Samuel Brown Thomas census record.](/census/1880-census-samuel-brown-thomas.jpg)
 Samuel Brown Thomas, San Augustine, Texas, 1880, Number 43
