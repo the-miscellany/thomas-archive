@@ -3,17 +3,26 @@
   https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
   License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
  */
+:root {
+  /* The paper-and-ink palette of the migration map (src/pages/migration.astro). */
+  --paper: #efe4cc;
+  --paper-deep: #e2d2ae;
+  --ink: #3b2f22;
+  --ink-strong: #2a2118;
+  --border: #9a8669;
+  --route: #9b2f1d;
+}
 body {
   font-family: Verdana, sans-serif;
   margin: auto;
   padding: 20px;
   max-width: 65ch;
   text-align: left;
-  background-color: #fff;
+  background-color: var(--paper);
   word-wrap: break-word;
   overflow-wrap: break-word;
   line-height: 1.5;
-  color: #444;
+  color: var(--ink);
 }
 h1,
 h2,
@@ -23,10 +32,10 @@ h5,
 h6,
 strong,
 b {
-  color: #222;
+  color: var(--ink-strong);
 }
 a {
-  color: #3273dc;
+  color: var(--route);
 }
 nav a {
   margin-right: 10px;
@@ -50,7 +59,7 @@ img {
 }
 code {
   padding: 2px 5px;
-  background-color: #f2f2f2;
+  background-color: var(--paper-deep);
 }
 pre {
   padding: 1rem;
@@ -59,8 +68,8 @@ pre > code {
   all: unset;
 }
 blockquote {
-  border: 1px solid #999;
-  color: #222;
+  border: 1px solid var(--border);
+  color: var(--ink-strong);
   padding: 2px 0px 2px 20px;
   margin: 0px;
   font-style: italic;
