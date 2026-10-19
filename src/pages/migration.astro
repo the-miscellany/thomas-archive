@@ -1,0 +1,599 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import { stops, START_YEAR, END_YEAR } from "../data/journey";
+
+const title = "From Wales to Texas";
+const description = `A map and timeline of the Thomas family's migrations, ${START_YEAR}–${END_YEAR}: from Carmarthenshire to Virginia, North Carolina, Alabama and east Texas.`;
+const years = (s: (typeof stops)[number]) => (s.from === s.to ? `${s.from}` : `${s.from}–${s.to}`);
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body class="migration-page">
+    <div class="migration" data-chapter="-1">
+      <div class="topbar"><Header /></div>
+
+      <div class="stage" aria-hidden="true">
+        <div id="map"></div>
+        <canvas id="globe"></canvas>
+        <div class="globe-labels">
+          <span class="globe-label" data-coords={stops[0].coords.join(",")}>Carmarthenshire</span>
+          <span class="globe-label" data-coords={stops[1].coords.join(",")}>Virginia</span>
+        </div>
+      </div>
+
+      <aside class="legend">
+        <p><span class="swatch documented"></span> Documented move</p>
+        <p><span class="swatch probable"></span> Probable route</p>
+        <p><span class="swatch disputed"></span> Disputed</p>
+        <p class="small">Lines show the order of the moves, not the roads taken, except where the sources name them.</p>
+      </aside>
+
+      <div class="story">
+        <section class="intro" data-step="intro">
+          <div class="title-card">
+            <p class="kicker">The Thomas family, {START_YEAR}–{END_YEAR}</p>
+            <h1>{title}</h1>
+            <p>
+              Ten generations, from a disputed beginning in Carmarthenshire to the piney woods of east Texas. Scroll
+              to follow them.
+            </p>
+            <p class="scroll-cue">↓</p>
+          </div>
+        </section>
+
+        {
+          stops.map((s, i) => (
+            <section class="chapter" data-step={String(i)} id={s.id}>
+              <article class="card">
+                <p class="kicker">{s.when}</p>
+                <h2>{s.place}</h2>
+                <ul class="people">
+                  {s.people.map((p) => (
+                    <li>{p}</li>
+                  ))}
+                </ul>
+                {s.route && (
+                  <p class="route">
+                    <strong>Getting there.</strong> {s.route}
+                  </p>
+                )}
+                {s.text.map((t) => (
+                  <p>{t}</p>
+                ))}
+                {s.link && (
+                  <p>
+                    Read more: <a href={s.link.href}>{s.link.label}</a>
+                  </p>
+                )}
+                <details>
+                  <summary>Sources</summary>
+                  <ul>
+                    {s.sources.map((src) => (
+                      <li>{src}</li>
+                    ))}
+                  </ul>
+                  {s.approximate && <p class="small">The place on the map is approximate.</p>}
+                </details>
+              </article>
+            </section>
+          ))
+        }
+
+        <section class="end" data-step="end">
+          <article class="card">
+            <h2>About this map</h2>
+            <p>
+              Most of the route comes from Robert E. Thomas's <i>The Thomas Family in 300 Years of American History</i>
+              (1978), which has a map of the family's migrations of its own, and from the census records and posts on
+              this site.
+            </p>
+            <p>
+              The early generations are a known problem. <i>The Thomas Book</i>, <i>The Thomas and Bridges Story</i>, Robert
+              E. Thomas and the family tree each tell the Wales-to-Virginia story differently, so that part of the line is
+              drawn as disputed.
+            </p>
+            <p class="explore-row">
+              <button type="button" class="explore-toggle" aria-pressed="false">Explore the map</button>
+            </p>
+            <p class="small">
+              Map data © <a href="https://openfreemap.org">OpenFreeMap</a>, © <a href="https://www.openmaptiles.org/">OpenMapTiles</a>,
+              © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>. Terrain from the
+              <a href="https://registry.opendata.aws/terrain-tiles/">Terrain Tiles</a> open dataset. Coastlines from
+              <a href="https://www.naturalearthdata.com/">Natural Earth</a>.
+            </p>
+          </article>
+        </section>
+      </div>
+
+      <nav class="timeline" aria-label="Chapters">
+        <span class="year" aria-live="off">{START_YEAR}</span>
+        <div class="ticks">
+          <span class="now" aria-hidden="true"></span>
+          {
+            stops.map((s, i) => (
+              <button type="button" data-goto={String(i)}>
+                <span class="label">{s.label}</span>
+                <span class="years">{years(s)}</span>
+              </button>
+            ))
+          }
+        </div>
+      </nav>
+
+      <p class="no-webgl-note">This browser can't show the 3D map, but the story is all here.</p>
+    </div>
+
+    <script>
+      import "../scripts/migration/main";
+    </script>
+
+    <style is:global>
+      body.migration-page {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        background: #efe4cc;
+      }
+
+      .migration {
+        --paper: #efe4cc;
+        --paper-deep: #e2d2ae;
+        --ink: #3b2f22;
+        --ink-soft: #7a6a55;
+        --ocean: #b4c3bd;
+        --water: #b6c7c3;
+        --river: #5f818a;
+        --graticule: rgba(59, 47, 34, 0.16);
+        --border: #9a8669;
+        --route: #9b2f1d;
+        --glow: #fff2d6;
+        --handoff: 0;
+        --serif: Georgia, "Times New Roman", serif;
+        color: var(--ink);
+      }
+
+      .migration .topbar {
+        position: fixed;
+        top: 12px;
+        left: 16px;
+        z-index: 20;
+        background: color-mix(in srgb, var(--paper) 88%, transparent);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+      .migration .topbar header {
+        margin: 0;
+      }
+      .migration .topbar a {
+        color: var(--ink);
+      }
+
+      .migration .stage {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(ellipse at 50% 45%, #4a3d30 0%, #241d17 70%);
+      }
+      .migration #map,
+      .migration #globe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .migration #map {
+        opacity: clamp(0, calc((var(--handoff) - 0.45) / 0.55), 1);
+      }
+      .migration #globe {
+        pointer-events: none;
+        opacity: clamp(0, calc((1 - var(--handoff)) / 0.35), 1);
+      }
+      .migration .globe-labels {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: clamp(0, calc((1 - var(--handoff)) / 0.35), 1);
+      }
+      .migration .globe-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: -0.6em 0 0 12px;
+        font: italic 15px var(--serif);
+        color: var(--glow);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+        transition: opacity 0.4s;
+        white-space: nowrap;
+      }
+
+      /* Map markers */
+      .migration .stop-marker,
+      .migration .aside-marker {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--serif);
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      /* MapLibre sets each marker's own opacity (to fade markers behind hills), so the story's
+         show-and-hide goes on the marker's children. */
+      .migration .stop-marker > *,
+      .migration .aside-marker > * {
+        opacity: 0;
+        transition: opacity 0.6s;
+      }
+      .migration .stop-marker.reached > *,
+      .migration .aside-marker.visible > * {
+        opacity: 1;
+      }
+      .migration .stop-marker .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--route);
+        border: 2px solid var(--paper);
+        box-shadow: 0 0 0 1px var(--route);
+        transition:
+          opacity 0.6s,
+          transform 0.4s;
+      }
+      .migration .stop-marker.active .dot {
+        transform: scale(1.5);
+      }
+      .migration .stop-marker .name {
+        font-size: 14px;
+        color: var(--ink);
+        text-shadow:
+          0 0 3px var(--paper),
+          0 0 3px var(--paper),
+          0 0 6px var(--paper);
+      }
+      .migration .stop-marker.active .name {
+        font-weight: bold;
+        font-size: 16px;
+      }
+      .migration .aside-marker .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        border: 1.5px solid var(--route);
+        background: var(--paper);
+      }
+      .migration .aside-marker .name {
+        font-size: 13px;
+        font-style: italic;
+        text-shadow: 0 0 3px var(--paper), 0 0 3px var(--paper);
+      }
+
+      /* Legend */
+      .migration .legend {
+        position: fixed;
+        top: 12px;
+        right: 16px;
+        z-index: 20;
+        width: 210px;
+        padding: 8px 12px;
+        font-size: 12px;
+        background: color-mix(in srgb, var(--paper) 92%, transparent);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        opacity: clamp(0, calc((var(--handoff) - 0.6) / 0.4), 1);
+        transition: opacity 0.3s;
+      }
+      .migration .legend p {
+        margin: 2px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .migration .swatch {
+        flex: none;
+        width: 28px;
+        height: 0;
+        border-top: 3px solid var(--route);
+      }
+      .migration .swatch.probable {
+        border-top-style: dashed;
+      }
+      .migration .swatch.disputed {
+        border-top-style: dotted;
+      }
+
+      /* Story */
+      .migration .story {
+        position: relative;
+        z-index: 10;
+        pointer-events: none;
+      }
+      .migration .story section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 0 40px;
+        box-sizing: border-box;
+      }
+      .migration .story .card,
+      .migration .story .title-card {
+        pointer-events: auto;
+      }
+      .migration .intro {
+        justify-content: center;
+        text-align: center;
+      }
+      .migration .title-card {
+        max-width: 34rem;
+        padding: 24px 32px;
+        color: var(--paper);
+        background: radial-gradient(ellipse at center, rgba(36, 29, 23, 0.72) 0%, rgba(36, 29, 23, 0.45) 60%, transparent 75%);
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+      }
+      .migration .title-card h1 {
+        font: normal 3.4rem/1.1 var(--serif);
+        color: var(--glow);
+        margin: 0.2em 0 0.3em;
+        letter-spacing: 0.01em;
+      }
+      .migration .kicker {
+        font: italic 15px var(--serif);
+        letter-spacing: 0.04em;
+        margin: 0;
+        color: var(--ink-soft);
+      }
+      .migration .title-card .kicker {
+        color: var(--paper-deep);
+      }
+      .migration .scroll-cue {
+        font-size: 1.6rem;
+        animation: bob 2s ease-in-out infinite;
+      }
+      @keyframes bob {
+        50% {
+          transform: translateY(6px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .migration .scroll-cue {
+          animation: none;
+        }
+      }
+
+      .migration .story .chapter {
+        min-height: 120vh;
+      }
+      .migration .card {
+        width: 380px;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 20px 24px;
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        box-shadow: 0 6px 24px rgba(36, 29, 23, 0.25);
+        font-size: 15px;
+        line-height: 1.55;
+      }
+      .migration .card h2 {
+        font: normal 1.6rem/1.2 var(--serif);
+        color: var(--ink);
+        margin: 0.2em 0 0.5em;
+      }
+      .migration .card a {
+        color: var(--route);
+      }
+      .migration .people {
+        list-style: none;
+        padding: 0 0 0 10px;
+        margin: 0 0 1em;
+        border-left: 3px solid var(--route);
+        font-family: var(--serif);
+      }
+      .migration .route {
+        font-style: italic;
+        color: var(--ink-soft);
+      }
+      .migration .route strong {
+        color: var(--ink);
+      }
+      .migration details {
+        font-size: 13px;
+        border-top: 1px solid var(--paper-deep);
+        padding-top: 8px;
+      }
+      .migration details ul {
+        padding-left: 18px;
+        margin: 6px 0;
+      }
+      .migration summary {
+        cursor: pointer;
+        color: var(--ink-soft);
+      }
+      .migration .small {
+        font-size: 12px;
+        color: var(--ink-soft);
+      }
+      .migration .story .end {
+        min-height: 100vh;
+        padding-bottom: 100px;
+      }
+      .migration .explore-toggle {
+        font: 15px var(--serif);
+        color: var(--paper);
+        background: var(--route);
+        border: none;
+        border-radius: 4px;
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+      .migration .explore-toggle:focus-visible,
+      .migration .timeline button:focus-visible {
+        outline: 2px solid var(--route);
+        outline-offset: 2px;
+      }
+
+      /* Explore mode: hide the story, hand the map to the reader. */
+      .migration.exploring .story .chapter,
+      .migration.exploring .story .intro {
+        visibility: hidden;
+      }
+      .migration.exploring .end .card > :not(.explore-row) {
+        display: none;
+      }
+      .migration.exploring .end {
+        position: fixed;
+        bottom: 70px;
+        left: 0;
+        min-height: 0;
+        padding: 0 16px;
+      }
+      .migration.exploring .end .card {
+        width: auto;
+        padding: 8px;
+      }
+      .migration.exploring .end .card p {
+        margin: 0;
+      }
+      .migration.exploring .timeline {
+        display: none;
+      }
+
+      /* Timeline */
+      .migration .timeline {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 8px 16px 10px;
+        background: color-mix(in srgb, var(--paper) 94%, transparent);
+        border-top: 1px solid var(--border);
+      }
+      .migration .timeline .year {
+        font: 1.7rem var(--serif);
+        font-variant-numeric: tabular-nums;
+        min-width: 3.2em;
+        color: var(--route);
+      }
+      .migration .ticks {
+        position: relative;
+        flex: 1;
+        display: flex;
+        border-top: 2px solid var(--ink-soft);
+      }
+      .migration .ticks button {
+        flex: 1;
+        min-width: 0;
+        background: none;
+        border: none;
+        border-left: 1px solid var(--border);
+        padding: 6px 6px 0;
+        text-align: left;
+        font: 12px var(--serif);
+        color: var(--ink-soft);
+        cursor: pointer;
+      }
+      .migration .ticks button.active {
+        color: var(--ink);
+        font-weight: bold;
+      }
+      .migration .ticks .label,
+      .migration .ticks .years {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .migration .ticks .years {
+        font-weight: normal;
+        font-size: 11px;
+      }
+      .migration .now {
+        position: absolute;
+        top: -7px;
+        left: 0;
+        width: 12px;
+        height: 12px;
+        margin-left: -6px;
+        border-radius: 50%;
+        background: var(--route);
+        border: 2px solid var(--paper);
+        box-sizing: border-box;
+        transition: transform 0.15s linear;
+      }
+
+      .migration .maplibregl-ctrl-attrib {
+        margin-bottom: 64px !important;
+      }
+
+      .migration .no-webgl-note {
+        display: none;
+      }
+      .migration.no-webgl .stage {
+        background: var(--paper-deep);
+      }
+      .migration.no-webgl .no-webgl-note {
+        display: block;
+        position: fixed;
+        top: 60px;
+        left: 16px;
+        right: 16px;
+        z-index: 20;
+        text-align: center;
+      }
+      .migration.no-webgl .legend,
+      .migration.no-webgl .now {
+        display: none;
+      }
+
+      @media (max-width: 700px) {
+        .migration .story section {
+          padding: 0 16px;
+        }
+        /* On a phone the card would cover the map, so each chapter starts with the map clear and
+           the card scrolls up over it afterwards. */
+        .migration .story .chapter {
+          min-height: 170vh;
+          align-items: flex-end;
+          padding-bottom: 90px !important;
+        }
+        .migration .card {
+          width: 100%;
+          font-size: 14px;
+          padding: 16px 18px;
+        }
+        .migration .title-card h1 {
+          font-size: 2.4rem;
+        }
+        .migration .legend {
+          top: auto;
+          bottom: 64px;
+          right: 8px;
+          width: auto;
+          display: none;
+        }
+        .migration .timeline {
+          gap: 10px;
+          padding: 6px 8px 8px;
+        }
+        .migration .timeline .year {
+          font-size: 1.2rem;
+        }
+        .migration .ticks .years {
+          display: none;
+        }
+        .migration .ticks button {
+          font-size: 11px;
+          padding: 6px 3px 0;
+        }
+      }
+    </style>
+  </body>
+</html>
