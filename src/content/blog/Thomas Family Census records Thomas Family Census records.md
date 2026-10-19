@@ -22,10 +22,10 @@ Benjamin Thomas - Edgecombe, North Carolina, 1810, Second from bottom
 Benjamin Thomas, Madison County, Alabama, 1816, record (no document)
 
 ![Shadrach Thomas census record.](/census/1850-census-shadrach-thomas.jpg)
-Shadrach Thomas, San Augustine, Texas, 1850, Middle of the page
+Shadrach Thomas, San Augustine, Texas, 1850, line 14
 
 ![Samuel Brown Thomas census record.](/census/1852-sbthomas.jpg)
-Samuel Brown Thomas, Mariposa, California, 1852, Only Last name visible, 4 from bottom
+Probably Samuel Brown Thomas, Mariposa, California, 1852, 4 from bottom. Only the end of the surname survives the torn edge (age 21, miner, born in Texas), so the identification isn't certain
 
 ![Samuel Brown Thomas census record.](/census/1860-sbthomas.jpg)
 Samuel Brown Thomas, Mariposa, California, 1860, Number 9
@@ -34,7 +34,7 @@ Samuel Brown Thomas, Mariposa, California, 1860, Number 9
 Shadrach Thomas, San Augustine, Texas, 1860, Number 15
 
 ![Samuel Brown Thomas census record.](/census/1880-census-samuel-brown-thomas.jpg)
-Samuel Brown Thomas, San Augustine, Texas, 1880, Number 43
+Samuel Brown Thomas, Chireno, Nacogdoches County, Texas, 1880, Number 43
 
 ![Samuel Brown Thomas census record.](/census/1900-sb-thomas.jpg)
 Samuel Brown Thomas and William Clayborn Thomas, Nacogdoches, Texas, 1900, Number 63 and 69
