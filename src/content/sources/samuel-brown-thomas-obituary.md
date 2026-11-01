@@ -15,6 +15,7 @@ images:
     alt: "Page 296 of the Confederate Veteran, 1911, with the end of the obituary outlined in red."
     caption: "Page 296: the rest of the obituary, top left."
 citation: "\"Capt. S. B. Thomas,\" Confederate Veteran 19 (1911): 295–96."
+repository: "Digitized by Google Books"
 posts: [samuel-brown-thomas]
 ---
 

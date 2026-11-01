@@ -27,6 +27,7 @@ images:
     alt: "Samuel Brown Thomas's Confederate pension application, page 6."
     caption: "Page 6."
 citation: "Confederate pension application of Samuel B. Thomas, San Augustine County, Texas, 1909."
+repository: "Texas State Library and Archives Commission, which indexes the state's pensions; the images were digitized by FamilySearch"
 posts: [samuel-brown-thomas]
 ---
 

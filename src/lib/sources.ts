@@ -7,7 +7,9 @@ export const TYPE_LABELS: Record<CollectionEntry<"sources">["data"]["type"], str
   military: "Military",
   obituary: "Obituary",
   vital: "Vital record",
+  photograph: "Photograph",
   marker: "Historical marker",
+  article: "Article",
   book: "Book",
 };
 

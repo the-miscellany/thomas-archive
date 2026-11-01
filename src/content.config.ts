@@ -45,7 +45,17 @@ const sources = defineCollection({
 			description: z.string(),
 			// A record made at the time, or an account published later
 			kind: z.enum(['record', 'published']),
-			type: z.enum(['census', 'land', 'military', 'obituary', 'vital', 'marker', 'book']),
+			type: z.enum([
+				'census',
+				'land',
+				'military',
+				'obituary',
+				'vital',
+				'photograph',
+				'marker',
+				'article',
+				'book',
+			]),
 			// The date as it should read, and the year it's filed under
 			date: z.string(),
 			year: z.number().int(),
