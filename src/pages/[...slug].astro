@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from "astro:content";
 import BlogPost from "../layouts/BlogPost.astro";
+import { getSources } from "../lib/sources";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -13,9 +14,25 @@ type Props = CollectionEntry<"blog">;
 
 const post = Astro.props;
 const { Content } = await render(post);
+// The sources pages that point back to this post
+const sources = (await getSources()).filter((s) => s.data.posts.some((ref) => ref.id === post.id));
 ---
 
 <BlogPost {...post.data}>
   <h1>{post.data.title}</h1>
   <Content />
+  {
+    sources.length > 0 && (
+      <section>
+        <h2>Sources</h2>
+        <ul>
+          {sources.map((source) => (
+            <li>
+              <a href={`/sources/${source.id}/`}>{source.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 </BlogPost>
