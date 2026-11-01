@@ -1,0 +1,178 @@
+---
+import { Image } from "astro:assets";
+import { getEntries, render, type CollectionEntry } from "astro:content";
+import Page from "../../layouts/Page.astro";
+import { getPeople, getSources, KIND_LABELS, TYPE_LABELS } from "../../lib/sources";
+
+export async function getStaticPaths() {
+  const sources = await getSources();
+  return sources.map((source, i) => ({
+    params: { id: source.id },
+    props: { source, previous: sources[i - 1], next: sources[i + 1] },
+  }));
+}
+
+interface Props {
+  source: CollectionEntry<"sources">;
+  previous?: CollectionEntry<"sources">;
+  next?: CollectionEntry<"sources">;
+}
+
+const { source, previous, next } = Astro.props;
+const { data } = source;
+const { Content } = await render(source);
+const people = await getPeople();
+const posts = await getEntries(data.posts);
+const hasBody = Boolean(source.body?.trim());
+---
+
+<Page title={`${data.title} · Sources`} description={data.description}>
+  <p class="crumbs"><a href="/sources/">Sources</a> › {TYPE_LABELS[data.type]}</p>
+  <h1>{data.title}</h1>
+  <p class="lede">{data.description}</p>
+
+  <dl class="facts">
+    <dt>Date</dt>
+    <dd>{data.date}</dd>
+    <dt>Place</dt>
+    <dd>{data.place}</dd>
+    <dt>People</dt>
+    <dd>
+      {
+        data.people.map((ref, i) => {
+          const person = people.get(ref.id)!;
+          return (
+            <>
+              {i > 0 && "; "}
+              <a href={`/sources/?person=${person.id}`}>{person.data.name}</a> ({person.data.life})
+            </>
+          );
+        })
+      }
+      {data.probable && <em> (probably; see below)</em>}
+    </dd>
+    <dt>Type</dt>
+    <dd>
+      <a href={`/sources/?type=${data.type}`}>{TYPE_LABELS[data.type]}</a> · {KIND_LABELS[data.kind]}
+    </dd>
+    <dt>Citation</dt>
+    <dd>{data.citation}</dd>
+    {
+      data.repository && (
+        <>
+          <dt>Held by</dt>
+          <dd>{data.repository}</dd>
+        </>
+      )
+    }
+  </dl>
+
+  {
+    data.images.map((image) => (
+      <figure>
+        <a href={image.src.src} title="Open the full-size scan">
+          <Image
+            src={image.src}
+            alt={image.alt}
+            widths={[650, 1300]}
+            sizes="(max-width: 700px) 100vw, 650px"
+          />
+        </a>
+        <figcaption>
+          {image.caption && <>{image.caption} </>}
+          <a href={image.src.src}>
+            Full size ({image.src.width} × {image.src.height})
+          </a>
+        </figcaption>
+      </figure>
+    ))
+  }
+
+  {
+    hasBody && (
+      <section class="body">
+        <Content />
+      </section>
+    )
+  }
+
+  {
+    posts.length > 0 && (
+      <section>
+        <h2>Written up in</h2>
+        <ul>
+          {posts.map((post) => (
+            <li>
+              <a href={`/${post.id}/`}>{post.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <nav class="pager" aria-label="Other sources">
+    {previous ? <a href={`/sources/${previous.id}/`}>← {previous.data.title}</a> : <span />}
+    {next ? <a href={`/sources/${next.id}/`}>{next.data.title} →</a> : <span />}
+  </nav>
+</Page>
+
+<style>
+  .crumbs {
+    font-size: 0.9em;
+    margin-bottom: 0;
+  }
+  h1 {
+    margin-top: 0.25em;
+  }
+  .lede {
+    font-size: 1.1em;
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.3rem 1rem;
+    padding: 1rem;
+    background: var(--paper-deep);
+    border: 1px solid var(--border);
+  }
+  .facts dt {
+    font-weight: bold;
+    color: var(--ink-strong);
+  }
+  .facts dd {
+    margin: 0;
+  }
+  figure {
+    margin: 2rem 0;
+  }
+  figure img {
+    display: block;
+    border: 1px solid var(--border);
+  }
+  figcaption {
+    margin-top: 0.4rem;
+    font-size: 0.9em;
+    text-align: center;
+  }
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.9em;
+  }
+  .pager a:last-child {
+    text-align: right;
+  }
+  @media (max-width: 30rem) {
+    .facts {
+      grid-template-columns: 1fr;
+    }
+    .facts dd {
+      margin-bottom: 0.5rem;
+    }
+  }
+</style>

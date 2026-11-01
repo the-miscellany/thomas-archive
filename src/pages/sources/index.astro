@@ -1,0 +1,276 @@
+---
+import { Image } from "astro:assets";
+import Page from "../../layouts/Page.astro";
+import {
+  getPeople,
+  getSources,
+  KIND_LABELS,
+  PERIODS,
+  periodOf,
+  TYPE_LABELS,
+} from "../../lib/sources";
+
+const sources = await getSources();
+const people = await getPeople();
+
+// Only offer the filter options that some source actually has.
+const types = Object.entries(TYPE_LABELS).filter(([type]) =>
+  sources.some((s) => s.data.type === type)
+);
+const periods = PERIODS.filter((p) => sources.some((s) => periodOf(s.data.year).id === p.id));
+const filedPeople = [...people.values()].filter((p) =>
+  sources.some((s) => s.data.people.some((ref) => ref.id === p.id))
+);
+
+// Everything the search box looks through, in lower case.
+function searchText(source: (typeof sources)[number]) {
+  const names = source.data.people.map((ref) => people.get(ref.id)?.data.name ?? "");
+  return [
+    source.data.title,
+    source.data.description,
+    source.data.date,
+    source.data.place,
+    source.data.citation,
+    TYPE_LABELS[source.data.type],
+    KIND_LABELS[source.data.kind],
+    ...names,
+    (source.body ?? "").replace(/[>#*_\\]/g, " "),
+  ]
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+}
+---
+
+<Page
+  title="Sources"
+  description="The records and published accounts behind the Thomas family history: census returns, land and military records, obituaries and books."
+>
+  <h1>Sources</h1>
+  <p>
+    The records and published accounts that the write-ups on this site are built on, from the 1790
+    census to the 20th century. Each one has its scans, at full size, with a citation and a
+    transcription where there is one. Filter them by type, person or period, or search the
+    transcriptions.
+  </p>
+
+  <form class="filters" id="filters" hidden>
+    <label class="search">
+      <span>Search</span>
+      <input type="search" name="q" placeholder="A name, place or word" autocomplete="off" />
+    </label>
+    <label>
+      <span>Type</span>
+      <select name="type">
+        <option value="">All types</option>
+        {types.map(([type, label]) => <option value={type}>{label}</option>)}
+      </select>
+    </label>
+    <label>
+      <span>Person</span>
+      <select name="person">
+        <option value="">Everyone</option>
+        {filedPeople.map((p) => <option value={p.id}>{p.data.name}</option>)}
+      </select>
+    </label>
+    <label>
+      <span>Period</span>
+      <select name="period">
+        <option value="">All periods</option>
+        {periods.map((p) => <option value={p.id}>{p.label}</option>)}
+      </select>
+    </label>
+    <label>
+      <span>Kind</span>
+      <select name="kind">
+        <option value="">All</option>
+        {Object.entries(KIND_LABELS).map(([kind, label]) => <option value={kind}>{label}s</option>)}
+      </select>
+    </label>
+    <p class="count" aria-live="polite">
+      <span id="count">{sources.length}</span> of {sources.length} sources
+      <button type="reset" id="clear">Clear</button>
+    </p>
+  </form>
+
+  <ol class="sources" id="sources">
+    {
+      sources.map((source) => (
+        <li
+          data-type={source.data.type}
+          data-kind={source.data.kind}
+          data-period={periodOf(source.data.year).id}
+          data-people={source.data.people.map((ref) => ref.id).join(" ")}
+          data-search={searchText(source)}
+        >
+          <a href={`/sources/${source.id}/`} class="thumb" tabindex="-1" aria-hidden="true">
+            <Image
+              src={source.data.images[0].src}
+              alt=""
+              width={120}
+              height={120}
+              fit="cover"
+              position="top"
+              loading="lazy"
+            />
+          </a>
+          <div>
+            <h2>
+              <a href={`/sources/${source.id}/`}>{source.data.title}</a>
+            </h2>
+            <p class="meta">
+              {source.data.date} · {source.data.place} · {TYPE_LABELS[source.data.type]}
+              {source.data.images.length > 1 && ` · ${source.data.images.length} images`}
+            </p>
+            <p class="description">{source.data.description}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+  <p id="empty" hidden>No sources match. Try fewer filters.</p>
+</Page>
+
+<style>
+  .filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--paper-deep);
+    border: 1px solid var(--border);
+  }
+  .filters label span {
+    display: block;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .filters .search {
+    grid-column: 1 / -1;
+  }
+  .filters input,
+  .filters select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.3rem;
+    font: inherit;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--border);
+  }
+  .count {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 0.9em;
+  }
+  .count button {
+    margin-left: 0.5rem;
+    font: inherit;
+    color: var(--route);
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .sources {
+    list-style: none;
+    padding: 0;
+  }
+  .sources li {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .sources li[hidden] {
+    display: none;
+  }
+  .thumb {
+    flex: none;
+  }
+  .thumb img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+  }
+  .sources h2 {
+    font-size: 1.1em;
+    margin: 0;
+  }
+  .meta {
+    margin: 0.2rem 0;
+    font-size: 0.85em;
+  }
+  .description {
+    margin: 0;
+  }
+  @media (max-width: 30rem) {
+    .thumb img {
+      width: 72px;
+      height: 72px;
+    }
+  }
+</style>
+
+<script>
+  // Filters the list in place, and keeps the filters in the address so a filtered view can be shared.
+  const form = document.getElementById("filters") as HTMLFormElement;
+  const items = [...document.querySelectorAll<HTMLLIElement>("#sources > li")];
+  const count = document.getElementById("count")!;
+  const empty = document.getElementById("empty")!;
+  const fields = ["q", "type", "person", "period", "kind"] as const;
+
+  function field(name: string) {
+    return form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
+  }
+
+  function apply() {
+    const q = field("q").value.trim().toLowerCase();
+    const words = q ? q.split(/\s+/) : [];
+    const type = field("type").value;
+    const person = field("person").value;
+    const period = field("period").value;
+    const kind = field("kind").value;
+
+    let shown = 0;
+    for (const item of items) {
+      const d = item.dataset;
+      const match =
+        (!type || d.type === type) &&
+        (!kind || d.kind === kind) &&
+        (!period || d.period === period) &&
+        (!person || d.people!.split(" ").includes(person)) &&
+        words.every((w) => d.search!.includes(w));
+      item.hidden = !match;
+      if (match) shown++;
+    }
+    count.textContent = String(shown);
+    empty.hidden = shown > 0;
+
+    const params = new URLSearchParams();
+    for (const name of fields) {
+      const value = field(name).value.trim();
+      if (value) params.set(name, value);
+    }
+    const query = params.toString();
+    history.replaceState(null, "", query ? `?${query}` : location.pathname);
+  }
+
+  // Start from the filters in the address, if any.
+  const params = new URLSearchParams(location.search);
+  for (const name of fields) {
+    const value = params.get(name);
+    if (value) field(name).value = value;
+  }
+
+  form.hidden = false;
+  form.addEventListener("input", apply);
+  form.addEventListener("submit", (e) => e.preventDefault());
+  form.addEventListener("reset", () => setTimeout(apply));
+  apply();
+</script>

@@ -1,0 +1,38 @@
+# The people the sources on /sources are filed under. Add a person here before tagging a source
+# with them. Only people who have died: nobody living goes on the site.
+- id: john-thomas-immigrant
+  name: John Thomas, the immigrant
+  life: b. 1585 or 1606; in Virginia by 1610 or 1622
+  born: 1585
+  post: early-thomas-line
+- id: theophilus-thomas
+  name: Maj. Theophilus Thomas
+  life: 1740–1803
+  born: 1740
+  post: theophilus-thomas
+- id: polly-dickinson
+  name: Mary Ann "Polly" (Dickinson) Thomas
+  life: 1776–1840
+  born: 1776
+- id: benjamin-thomas
+  name: Benjamin Thomas
+  life: 1778–c. 1834
+  born: 1778
+  post: benjamin-thomas
+- id: shadrach-thomas
+  name: Shadrach Dickinson Thomas
+  life: 1799–1874
+  born: 1799
+- id: samuel-brown-thomas
+  name: Capt. Samuel Brown Thomas
+  life: 1831–1911
+  born: 1831
+  post: samuel-brown-thomas
+- id: mary-garrett
+  name: Mary Elizabeth (Garrett) Thomas
+  life: 1853–1925
+  born: 1853
+- id: william-clayborn-thomas
+  name: William Clayborn "Bee" Thomas
+  life: 1879–1960
+  born: 1879
