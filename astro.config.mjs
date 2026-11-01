@@ -5,8 +5,9 @@ import { createRequire } from "node:module";
 
 import sitemap from "@astrojs/sitemap";
 
-// MapLibre runs its tile parsing in a web worker, a separate file that Astro 2's build drops. This
-// serves it in dev and copies it into the build, at /maplibre-gl-worker.js (see the migration map).
+// MapLibre runs its tile parsing in a web worker, a separate file it finds at runtime from its own
+// import.meta.url, so Vite never sees it and neither dev nor the build serves it (checked on Astro 7).
+// This serves it in dev and copies it into the build, at /maplibre-gl-worker.js (see the migration map).
 const require = createRequire(import.meta.url);
 const maplibreWorker = require.resolve("maplibre-gl/dist/maplibre-gl-worker.mjs");
 const WORKER_PATH = "/maplibre-gl-worker.js";
