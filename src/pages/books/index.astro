@@ -1,0 +1,46 @@
+---
+import Page from "../../layouts/Page.astro";
+import { getBooks, megabytes } from "../../lib/books";
+
+const books = getBooks().sort((a, b) => a.title.localeCompare(b.title));
+---
+
+<Page
+  title="Books"
+  description="Family history books, digitized to read here or download"
+>
+  <h1>Books</h1>
+  <p>
+    Books about the Thomas family, to read here or to download as an e-book
+    (EPUB).
+  </p>
+  <ul>
+    {
+      books.map((book) => (
+        <li>
+          <p>
+            <a href={`/books/${book.slug}/`}>
+              <b>{book.title}</b>
+            </a>
+            <br />
+            by {book.author}
+            <br />
+            <a href={`/books/${book.slug}/`}>Read online</a> ·{" "}
+            <a href={book.epub}>Download the EPUB ({megabytes(book.epubSize)})</a>
+          </p>
+        </li>
+      ))
+    }
+    <li>
+      <p>
+        <a href="/books/thomas-collection/">
+          <b>THOMAS! - Thomas Family history Collection</b>
+        </a>
+        <br />
+        by Sam Thomas, with excerpts from the books above
+        <br />
+        PDF, MOBI and EPUB downloads
+      </p>
+    </li>
+  </ul>
+</Page>

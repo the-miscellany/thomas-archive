@@ -1,0 +1,39 @@
+---
+import BookPage from "../../../layouts/BookPage.astro";
+import { getBook, getBooks, getPage, megabytes } from "../../../lib/books";
+
+export function getStaticPaths() {
+  return getBooks().map((book) => ({ params: { book: book.slug } }));
+}
+
+const book = getBook(Astro.params.book!)!;
+const front = getPage(book.slug, "index");
+---
+
+<BookPage
+  title={book.title}
+  description={`${book.title} by ${book.author}, to read online or download`}
+>
+  <p><a href="/books/">← Books</a></p>
+  <p class="book-download">
+    <a href={book.epub}>Download the EPUB ({megabytes(book.epubSize)})</a>
+  </p>
+  {
+    front ? (
+      <div class="book-text" set:html={front} />
+    ) : (
+      <div class="book-text">
+        <h1>{book.title}</h1>
+        <p>by {book.author}</p>
+        <h2>Contents</h2>
+        <ul class="toc">
+          {book.chapters.map((c) => (
+            <li>
+              <a href={`/books/${book.slug}/${c.slug}/`}>{c.title}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</BookPage>

@@ -1,0 +1,53 @@
+{
+  "slug": "thomas-family",
+  "title": "The Thomas Family in 300 Years of American History",
+  "author": "Robert E. Thomas",
+  "epub": "/books/thomas-family/the-thomas-family.epub",
+  "epubSize": 2067746,
+  "chapters": [
+    {
+      "slug": "foreword",
+      "title": "Foreword and Acknowledgments"
+    },
+    {
+      "slug": "chart",
+      "title": "A Chart of the Family"
+    },
+    {
+      "slug": "chapter-1",
+      "title": "Chapter I: Virginia — The First Four Generations"
+    },
+    {
+      "slug": "chapter-2",
+      "title": "Chapter II: North Carolina — The Fifth and Sixth Generations"
+    },
+    {
+      "slug": "chapter-3",
+      "title": "Chapter III: Moving Westward — To Alabama and Texas: The Seventh Generation"
+    },
+    {
+      "slug": "chapter-4",
+      "title": "Chapter IV: San Augustine — The Eighth Generation"
+    },
+    {
+      "slug": "chapter-5",
+      "title": "Chapter V: Hopkins County — The Ninth Generation"
+    },
+    {
+      "slug": "chapter-6",
+      "title": "Chapter VI: The Seven Brothers — The Tenth Generation"
+    },
+    {
+      "slug": "appendix-b",
+      "title": "Appendix B: The Paternal Ancestry of Susan Jane Buford"
+    },
+    {
+      "slug": "notes",
+      "title": "Notes and Bibliography"
+    },
+    {
+      "slug": "footnotes",
+      "title": "Footnotes"
+    }
+  ]
+}
