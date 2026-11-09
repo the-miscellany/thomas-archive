@@ -1,0 +1,33 @@
+---
+import BookPage from "../../../layouts/BookPage.astro";
+import { getBook, getBooks, getPage } from "../../../lib/books";
+
+export function getStaticPaths() {
+  return getBooks().flatMap((book) =>
+    book.chapters.map((chapter, i) => ({
+      params: { book: book.slug, chapter: chapter.slug },
+      props: { index: i },
+    }))
+  );
+}
+
+const book = getBook(Astro.params.book!)!;
+const { index } = Astro.props;
+const chapter = book.chapters[index];
+const prev = book.chapters[index - 1];
+const next = book.chapters[index + 1];
+const body = getPage(book.slug, chapter.slug)!;
+const base = `/books/${book.slug}/`;
+---
+
+<BookPage
+  title={`${chapter.title} - ${book.title}`}
+  description={`${chapter.title}, from ${book.title} by ${book.author}`}
+>
+  <p><a href={base}>← {book.title}</a></p>
+  <div class="book-text" set:html={body} />
+  <nav class="book-nav" aria-label="Chapters">
+    <span>{prev && <a href={`${base}${prev.slug}/`}>← {prev.title}</a>}</span>
+    <span>{next && <a href={`${base}${next.slug}/`}>{next.title} →</a>}</span>
+  </nav>
+</BookPage>

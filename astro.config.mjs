@@ -32,5 +32,7 @@ function maplibreWorkerFile() {
 // https://astro.build/config
 export default defineConfig({
   site: "https://thomasarchive.com",
+  // The old THOMAS! collection page at /book is now one of the books at /books.
+  redirects: { "/book": "/books/" },
   integrations: [mdx(), sitemap(), maplibreWorkerFile()],
 });

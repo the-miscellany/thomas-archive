@@ -1,0 +1,71 @@
+---
+import Page from "./Page.astro";
+
+export interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<Page title={title} description={description}>
+  <slot />
+</Page>
+
+<style is:global>
+  .book-text h1 {
+    font-size: 1.6em;
+    margin: 0.5em 0;
+  }
+  .book-text h2 {
+    font-size: 1.25em;
+    margin: 1.5em 0 0.5em;
+  }
+  .book-text p {
+    margin: 0 0 0.8em;
+  }
+  .book-text .small,
+  .book-text div.small p {
+    font-size: 0.85em;
+  }
+  .book-text figcaption {
+    font-size: 0.85em;
+    text-align: center;
+  }
+  .book-text ul.toc {
+    list-style: none;
+    padding-left: 0;
+  }
+  .book-text .footnotes {
+    font-size: 0.85em;
+    border-top: 1px solid var(--border);
+    margin-top: 2em;
+  }
+  .book-text .footnote-back {
+    text-decoration: none;
+  }
+  .book-text table {
+    font-size: 0.9em;
+  }
+  .book-text section#general-and-name-index p,
+  .book-text section#illustrations-index p {
+    margin: 0 0 0.2em;
+    padding-left: 1.5em;
+    text-indent: -1.5em;
+  }
+  .book-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    margin: 2em 0;
+    border-top: 1px solid var(--border);
+    padding-top: 1em;
+  }
+  .book-download {
+    border: 1px solid var(--border);
+    background: var(--paper-deep);
+    padding: 0.5em 1em;
+    margin: 1em 0;
+  }
+</style>

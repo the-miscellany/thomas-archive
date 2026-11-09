@@ -34,3 +34,15 @@ check there rather than assuming them. Netlify should build with Node 24: `.nvmr
   Ask before adding a living person's details to a page or a commit.
 - Match the voice and spelling of the existing posts, which are Sam's. Transcribed records and
   obituaries stay as written.
+
+## Books
+
+- `/books` lists the digitized family books: `src/books/<slug>/` holds each book's `book.json` and one
+  HTML file per chapter (rendered by `src/pages/books/[book]/`), and `public/books/<slug>/` its EPUB
+  and images. The two books come from the private `thomas-genealogy` repo (made with its
+  `books/tools`); edit the chapters there and re-export rather than by hand here.
+- Living people's details are left out of these web editions and EPUBs (the rest is as printed):
+  *The Thomas Family*'s Appendix A, and the residences of private people in the acknowledgements of
+  *The Thomas and Bridges Story*. Keep it that way when re-exporting, and ask Sam before putting
+  anything back.
+- `/book` redirects to `/books`; the THOMAS! collection page is now `/books/thomas-collection`.
